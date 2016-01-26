@@ -61,30 +61,30 @@ def construct_epsilon_graph(X, epsilon = 0.5, sigma = 1):
 
     return res
 
-def construct_spectral_vector_matrix(R, k):
+def construct_spectral_vector_matrix(L, k):
     """
     """
 
-    U,s,_ = np.linalg.svd(R, full_matrices=True)
+    U,s,_ = np.linalg.svd(L, full_matrices=True)
 
     return U[:,:k]
 
 def kmeans_clustering(data, k):
-    whitened = whiten(data)
-    centroids, _ = kmeans(whitened, k)
-    clusters, _ = vq(whitened, centroids)
+    centroids,_ = kmeans(data, k)
+    clusters,_ = vq(data, centroids)
 
     return clusters
 
 def spectral_clustering(data, k, sigma = 1, epsilon = 0.5):
     epsilon_graph = construct_epsilon_graph(data, epsilon, sigma)
     D = construct_degree_matrix(epsilon_graph)
-    W = construct_epsilon_graph(data, -1)
+    W = construct_epsilon_graph(data, epsilon=-1)
     L = np.subtract(D, W)
     U_k = construct_spectral_vector_matrix(L, k)
-    kmeans_data = U_k.T
 
-    return kmeans_clustering(kmeans_data, k)
+    clusters = kmeans_clustering(U_k, k)
+
+    return clusters
 
 def count_error(clusters, classes):
     count = 0
@@ -131,12 +131,13 @@ def find_best_params(data, classes, k, n):
     return best_sigma, best_epsilon, best_error
 
 def print_best_param_and_errors(n):
-    X, C = load_iris_data()
-    best_spectral_sigma, best_spectral_epsilon, best_spectral_error = find_best_params(X, C, 3, n)
+    # X, C = load_iris_data()
+    X, C = datasets.make_circles(n_samples=200)
+    best_spectral_sigma, best_spectral_epsilon, best_spectral_error = find_best_params(X, C, 2, n)
 
     print("-------")
     print("Kmeans:")
-    print("\terrors  = {}".format(mean_kmeans_error(X, C, 3, n)))
+    print("\terrors  = {}".format(mean_kmeans_error(X, C, 2, n)))
     print("-------")
     print("Spectral:")
     print("\tsigma   = {}".format(best_spectral_sigma))
@@ -147,7 +148,7 @@ def main():
     ####### RECHERCHE DES MEILLEURS PARAMÈTRES #####
     #
     # /!\ C'est un peu long
-    print_best_param_and_errors(10)
+    print_best_param_and_errors(1)
     #
     # Résultats :
 
