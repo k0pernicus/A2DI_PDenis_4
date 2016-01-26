@@ -3,6 +3,7 @@
 import random
 import numpy as np
 import math
+from matplotlib import pyplot as plt
 from sklearn import datasets
 from scipy.cluster.vq import kmeans, whiten, vq
 from numpy import arange
@@ -130,14 +131,12 @@ def find_best_params(data, classes, k, n):
 
     return best_sigma, best_epsilon, best_error
 
-def print_best_param_and_errors(n):
-    # X, C = load_iris_data()
-    X, C = datasets.make_circles(n_samples=200)
-    best_spectral_sigma, best_spectral_epsilon, best_spectral_error = find_best_params(X, C, 2, n)
+def print_best_param_and_errors(X, C, k, n):
+    best_spectral_sigma, best_spectral_epsilon, best_spectral_error = find_best_params(X, C, k, n)
 
     print("-------")
     print("Kmeans:")
-    print("\terrors  = {}".format(mean_kmeans_error(X, C, 2, n)))
+    print("\terrors  = {}".format(mean_kmeans_error(X, C, k, n)))
     print("-------")
     print("Spectral:")
     print("\tsigma   = {}".format(best_spectral_sigma))
@@ -145,13 +144,12 @@ def print_best_param_and_errors(n):
     print("\terrors  = {}".format(best_spectral_error))
 
 def main():
-    ####### RECHERCHE DES MEILLEURS PARAMÈTRES #####
-    #
-    # /!\ C'est un peu long
-    print_best_param_and_errors(1)
-    #
-    # Résultats :
+    X, C = load_iris_data()
+    k = 3
+    # X, C = datasets.make_circles()
+    # k = 2
 
+    print_best_param_and_errors(X, C, k, 5)
 
 if __name__ == '__main__':
     main()
