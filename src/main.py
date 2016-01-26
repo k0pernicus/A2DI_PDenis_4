@@ -67,7 +67,7 @@ def construct_spectral_vector_matrix(R, k):
 
     U,s,_ = np.linalg.svd(R, full_matrices=True)
 
-    return U[:k]
+    return U[:,:k]
 
 def kmeans_clustering(data, k):
     whitened = whiten(data)
